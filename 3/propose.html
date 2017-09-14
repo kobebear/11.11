@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en"><!--告诉浏览器，我是html网页-->
+<head><!--对网页的配置-->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>嫁给我吧</title><!--配置浏览器标签页上显示的网页名-->
+  <style>/*网页内容的衣柜: 包含所有网页内容所需的成套样式定义*/
+    /*布置大礼堂的总体样式*/
+    body{/*礼堂大背景刷成粉色，礼堂的所有内容，居中对齐*/
+      background: #EF817D;
+      text-align: center;
+    }
+		canvas{/*设置舞台*/
+      cursor:pointer;/*当鼠标进入舞台时，变成手指，表示可点击互动*/ 
+    }
+  </style>
+</head>
+<body><!--网页的所有内容-->
+  <canvas id="pane" width="1024" height="520"></canvas>
+  <script>/*用程序在舞台上绘制想要的图画*/
+    //Step1: 在程序中载入舞台背景图片和主角小人图片
+    var bg = new Image();//新建图片
+		bg.src = "../images/bg.png";//设置图片为bg.png
+    var person = new Image();
+		person.src = "../images/person.png";
+    //Step2: pane即像舞台又像画板，画板自带一支画笔，拿到笔才能在画板上画画。
+		var pen = pane.getContext('2d');
+    //Step3: 用笔将舞台背景图片，和前景小人图片，绘制到舞台上
+    window.onload=function(){   
+      paint();
+    }
+    //重绘一切
+    function paint(){
+      pen.clearRect(0,0,1024,520);//清屏
+      pen.drawImage(bg, 0, 0);//重绘背景
+      pen.drawImage(person, 0, 0);//重绘人物
+    }
+    //定义一朵flower，设置大小，开始位置，下落速度(步长)
+    var flower=new Image();
+    flower.src="../images/flower.png";
+    flower
+  </script>
+</body>
+</html>

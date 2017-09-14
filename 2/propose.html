@@ -13,12 +13,24 @@
     }
 		canvas{/*设置舞台*/
       cursor:pointer;/*当鼠标进入舞台时，变成手指，表示可点击互动*/ 
-      background:white;/*舞台背景暂时为白色，方便调整位置*/
     }
   </style>
 </head>
 <body><!--网页的所有内容-->
-  <!--准备舞台,名为pane,宽1024,高520-->
   <canvas id="pane" width="1024" height="520"></canvas>
+  <script>/*用程序在舞台上绘制想要的图画*/
+    //Step1: 在程序中载入舞台背景图片和主角小人图片
+    var bg = new Image();//新建图片
+		bg.src = "../images/bg.png";//设置图片为bg.png
+    var person = new Image();
+		person.src = "../images/person.png";
+    //Step2: pane即像舞台又像画板，画板自带一支画笔，拿到笔才能在画板上画画。
+		var pen = pane.getContext('2d');
+    //Step3: 用笔将舞台背景图片，和前景小人图片，绘制到舞台上
+    window.onload=function(){
+      pen.drawImage(bg, 0, 0);
+      pen.drawImage(person, 0, 0);
+    }
+  </script>
 </body>
 </html>
