@@ -1,0 +1,183 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+	<meta charset="UTF-8">
+    <title>1分钟最浪漫的求婚</title>
+	  <style>
+    	body{background: #EF817D;text-align: center;}
+		  canvas{cursor:pointer}
+    </style>
+	<script>
+		/*各位弟兄们！光棍节快乐！今天我教大家如何用一张网页，一个画板元素实现最浪漫的求婚！如果你希望今后不再single，那还在犹豫什么？follow me!*/
+		/*我们要完成的效果分三层：底层是静态背景图片；中间层是动态随机下落的鲜花；上层包括人物和只能点到同意永远点不到拒绝的按钮。说干就干。*/
+        //一开始就要精心准备素材哦！不要怕麻烦，毕竟是终身大事嘛
+		var bg = new Image();
+		bg.src = "../images/bg.png";
+		var yes = new Image();
+		yes.src = "../images/yes.png";
+		var no = new Image();
+		no.src = "../images/no.png";
+		var answer0 = new Image();
+		answer0.src = "../images/answer0.png";	    
+		var answer1 = new Image();
+		answer1.src = "../images/answer1.png";
+		var answer = [answer0, answer1];
+		var hart = new Image();
+		hart.src = "../images/hart.png";
+		var flower = new Image();
+		flower.src = "../images/flower.png";
+		var person = new Image();
+		person.src = "../images/person.png";	
+		
+		/*然后是公共变量区：1张画板，1支笔就是我们所有的工具；这次求婚能不能"pass"，就看"flowers"中放置的鲜花能否打动妹子的放心了。*/
+		var canvas;
+		var ctx;
+		var pass = false;
+		var flowers = [];
+
+		//要实现动画：先要获得网页中的画板——Canvas对象，并初始化画笔——context；我们的动画是通过逐帧逐层实现绘制的。每1/20秒画一帧，每画一帧都会从背景到前景重绘一遍。
+		//比如，先来画一张静态背景。
+		//然后，我们定义1朵花的模板
+		/*自由随机绽放的鲜花才更浪漫！你一定不希望你的所有鲜花都像键盘按键一样横排数列，大小一致。那样子简直太傻了。所以，我们要为每朵鲜花设定随机位置坐标和随机缩放比例。*/
+		/*另外，每多鲜花都像踢正步一样整齐下落，可绝不是体现你浪漫的方式。所以，为鲜花设置一个随机的步进变量，每绘制一次y坐标就增加1个step变量的长度，实现随机下落。*/
+		/*动画的每一帧中，鲜花都要在下落路线上的下一个位置重绘。所以定义一个专门在当前下落位置绘制鲜花的方法*/
+		/*使用HTML5的canvas元素提供的固定绘图套路可以让你在任意位置，以任意缩放和旋转方式绘制图片。*/
+		/*鲜花要多，才够浪漫。所以先来99朵！看看效果？*/
+		/*哦不，等等。我的花呢？因为对y坐标一直加一直加，所有鲜花就只会不停下落，一去不返。都给我拉回来！只要求婚没成功，所有鲜花都得回到顶部重新下落！没办法，只有99朵，却要造出9999朵的效果，屌丝伤不起哇。解开下面的注释看看？所有的花是不是都循环起来了？这是咱们之间的秘密，不要告诉她哦！否则。。。*/
+		/*背景和鲜花都布置完毕，下面主角在哪儿呢？一句话绘制新浪和新娘*/
+		/*下面是最淘气的两个按钮；先定义按钮的模板，封装按钮位置坐标和绘制方法。其中绘制方法中包含重要的旋转技巧：因为按钮图片的箭头要指向说话的人物中心点，而旋转的角度就是顺时针转过按钮中心与人物中心连线的倾角*/
+		//接下来，创建两个按钮，初始化自己的位置和箭头指向的位置
+		/*现在为画板定义单击事件。如果你点在了"好"按钮的范围内，那么恭喜你求婚成功！那么问题来了：如何判断是否点击在按钮范围内?求婚成功又是什么样呢？*/
+		/*我们为按钮增加两个方法：
+			首先：实现判断任意坐标是否在按钮范围内——contains；
+			//如果你的数学是体育老师教的，那么我也不指望你会勾股定理。按照我的公式做吧，请叫我雷锋！//
+			然后：绘制求婚成功的两颗心的方法——paintHart。
+			//这个方法就是你的伊甸园，就是你的洞房花烛。不过，别高兴的太早，得求婚成功，才能调用这个方法哦！//
+		*/
+		/*有了以上两个小方法的辅助，我们就可以顺利实现画板的单击事件了。实际上，如果点击到按钮范围内时只做了一件事，就是修改pass变量为求婚成功！*/
+		/*修改onload结尾的if判断，增加else部分。如果求婚成功则不再绘制按钮，而是绘制两颗大个的永不分离的心*/
+
+		/*但是你的小女朋友可没那么幸运了。
+		//我们会判断她的鼠标如果移动到了"不好"的按钮上...放心哥们儿，你可以搞本漫画，来杯可乐，先放松一下了。因为，还没等你的小女朋友按下那万恶的鼠标按键，我就已经用20分之1秒的宇宙速度，果断将按钮挪到了另一个随机的位置。那么你说，她还有点到按钮的机会吗？呵呵，你懂的，请再次叫我活雷锋！*/
+		/*兄弟们，哥们儿只能帮你到这儿了，剩下的你知道该怎么做了(轻轻松点一下"好"，完成求婚），祝你好运!祝天下有情人终成眷属)*/
+		window.onload=function(){
+	    canvas = document.getElementById('pane');
+			ctx = canvas.getContext('2d');
+	    for(var i=0;i<99;i++) 
+				flowers[i] = new Flower();
+			var btnY = new Btn(460,330,328,246,yes);
+	    var btnN = new Btn(564,402,686,294,no);
+	   	setInterval(function(){
+	   		ctx.drawImage(bg, 0, 0);
+				for(var i=0; i<flowers.length; i++) 
+					flowers[i].paint(); 
+				ctx.drawImage(person, 0, 0);
+			
+	   		if(!pass) {btnY.paintBtn();btnN.paintBtn();}
+				/*成功了才能paintHart哦！*/
+				else btnY.paintHart();	
+	   	}, 1000/20);
+		
+	    canvas.onclick = function(evt){
+				if(pass) return;
+				var e = evt||event;
+	    	var mpoint = getPointOnCanvas(e.x,e.y);
+	    	if(boy.contains(mpoint.x,mpoint.y)) pass = true;
+	    };
+	    
+	    canvas.onmousemove = function(evt){
+	    	if(pass) return;
+	    	var e = evt||event;
+	    	var mpoint = getPointOnCanvas(e.x,e.y);	    	
+	    	if(btnN.contains(mpoint.x, mpoint.y)){
+				//随机获取指定范围内1个点
+	    		var rx;var ry;var d;
+	    		do{ax = Math.floor((Math.random() * 190) + 648);
+	    			ay = Math.floor((Math.random() * 190) + 210);
+	    			d = Math.sqrt(Math.pow((mpoint.x-ax),2)
+								 +Math.pow((mpoint.y-ay),2));
+	    		}while(d<btnN.r || d > (btnN.r+10));
+	    		btnN.x = ax;
+	    		btnN.y = ay;
+	    	}
+	    };	   	
+		}
+		function Flower(){
+			this.x=Math.floor(Math.random()*(1024-flower.naturalWidth));
+			this.y=Math.floor(Math.random()*(520-flower.naturalHeight)); 
+			this.scale=Math.floor((Math.random()*71)+30)/100;
+			this.step=Math.floor(Math.random() * 5 +1);
+	   	this.paint = function(){
+				this.y+=this.step;
+	   		ctx.save();
+	   		ctx.translate(this.x, this.y);
+				ctx.scale(this.scale, this.scale);
+	   		ctx.drawImage(flower, 0, 0);
+	   		ctx.restore();
+				if(this.y>=520){
+					this.y = -flower.naturalHeight;
+					this.x = Math.floor(Math.random()
+								*(1024-flower.naturalWidth));
+				}
+	   	};	   			
+		};
+		
+		function Btn(pointx,pointy,x,y,say){
+			//人物的中心点位置
+			this.x=x;
+			this.y=y;
+			//按钮的位置
+			this.pointx=pointx;
+			this.pointy=pointy;
+			//闪烁效果要用的递增下标
+			this.index=0;
+			//按钮距离人物中心点位置的距离
+			this.r=50;
+			//按钮中要说的话：好/不好
+			this.say=say;
+			//绘制按钮
+			this.paintBtn=function(){
+				//按钮闪烁
+	    	this.index+=0.2;
+	    	var img = answer[Math.floor(this.index)%2];
+				//固定套路绘制图片
+				ctx.save();
+				//坐标原点位移到要画画的位置
+				ctx.translate(this.x, this.y);
+				//旋转角度计算
+				var a = Math.atan((this.y- this.pointy)/(this.x - this.pointx));
+				//如果倾角<0,需要+180度进行修正。记住就好
+				a=a<0?a+Math.PI:a;
+				//计算好角度后即可旋转坐标轴
+				ctx.rotate(a);
+	   		ctx.drawImage(img,-img.naturalWidth/2+10,-img.naturalHeight/2);
+ 				ctx.restore();
+				//在指定位置绘制 文字 "好/不好”
+	   		ctx.drawImage(this.say
+					,this.x-this.say.naturalWidth/2
+					,this.y-this.say.naturalHeight/2);
+			};
+			this.contains = function(ex,ey){
+				return Math.sqrt(Math.pow((ex-this.x),2) 
+								+Math.pow((ey-this.y),2)
+								)<this.r;
+			};
+			this.paintHart=function(){ctx.drawImage(hart,0,0);};
+		};
+		
+		/*以下两个方法，不再赘述*/
+			   	
+		/** 换算鼠标屏幕鼠标位置到canvas面板相对位置 */
+		function getPointOnCanvas(x,y){
+			var bbox =canvas.getBoundingClientRect();
+				return { 
+				x:x-bbox.left*(canvas.width/bbox.width),
+					y:y-bbox.top*(canvas.height/bbox.height)
+			};
+		}
+    </script>
+  </head>
+  <body>
+    <canvas id="pane" width="1024" height="520"></canvas>
+  </body>
+</html>

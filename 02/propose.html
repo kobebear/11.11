@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en"><!--告诉浏览器，我是html网页-->
+<head><!--对网页的配置-->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>嫁给我吧</title><!--配置浏览器标签页上显示的网页名-->
+  <style>/*网页内容的衣柜: 包含所有网页内容所需的成套样式定义*/
+    /*布置大礼堂的总体样式*/
+    body{/*礼堂大背景刷成粉色，礼堂的所有内容，居中对齐*/
+      background: #EF817D;
+      text-align: center;
+    }
+		canvas{/*设置舞台*/
+      cursor:pointer;/*当鼠标进入舞台时，变成手指，表示可点击互动*/ 
+      background:white;/*舞台背景暂时为白色，方便调整位置*/
+    }
+  </style>
+</head>
+<body><!--网页的所有内容-->
+  <!--准备舞台,名为pane,宽1024,高520-->
+  <canvas id="pane" width="1024" height="520"></canvas>
+</body>
+</html>
