@@ -25,9 +25,15 @@
 
     var WIDTH=92,HEIGHT=81;
 
-    var flower=new Image();
-    flower.src="../images/flower.png";
-    //Step1: 定义函数，专门生成花朵随机大小和位置
+    //Step1: 反复创建99朵玫瑰:
+    var flowers=[];
+    for(var i=0;i<99;i++){
+      var flower=new Image();
+      flower.src="../images/flower.png";
+      reset(flower);
+      flowers.push(flower);
+    }
+
     function reset(flower){
       flower.scale=parseInt(Math.random()*71+30)/100;
       var width=WIDTH*flower.scale,
@@ -36,13 +42,11 @@
       flower._y=-height;
       flower.step=parseInt(Math.random()*5+1);
     }
-    reset(flower);
 
     function down(flower){
       if(flower._y<520/flower.scale)
         flower._y+=flower.step;
       else
-        //Step2: 每次到底，重新定位花朵大小和新位置
         reset(flower);
     }
     
@@ -51,12 +55,18 @@
     function paint(){
       pen.clearRect(0,0,1024,520);
       pen.drawImage(bg, 0, 0);
-      //Step3: 缩小画笔，画小花
-      down(flower);
-      pen.scale(flower.scale,flower.scale);
-      pen.drawImage(flower,flower._x,flower._y);
-             //放大回正常，画其他！
-      pen.scale(1/flower.scale,1/flower.scale);
+      //Step2:遍历flowers，画每一朵花
+      for(var i=0;i<flowers.length;i++){
+        var flower=flowers[i];
+        down(flower);
+        pen.scale(flower.scale,flower.scale);
+        pen.drawImage(
+          flower,
+          flower._x/flower.scale,
+          flower._y/flower.scale
+        );
+        pen.scale(1/flower.scale,1/flower.scale);
+      }
       pen.drawImage(person, 0, 0);
     }
 

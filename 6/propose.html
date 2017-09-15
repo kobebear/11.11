@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>嫁给我吧</title>
+  <style>
+    body{
+      background: #EF817D;
+      text-align: center;
+    }
+		canvas{
+      cursor:pointer; 
+    }
+  </style>
+</head>
+<body>
+  <canvas id="pane" width="1024" height="520"></canvas>
+  <script>
+    var bg = new Image();
+		bg.src = "../images/bg.png";
+    var person = new Image();
+		person.src = "../images/person.png";
+
+    /*************  flowers  ****************/
+    var WIDTH=92,HEIGHT=81;
+
+    var flowers=[];
+    for(var i=0;i<99;i++){
+      var flower=new Image();
+      flower.src="../images/flower.png";
+      reset(flower);
+      flowers.push(flower);
+    }
+
+    function reset(flower){
+      flower.scale=parseInt(Math.random()*71+30)/100;
+      var width=WIDTH*flower.scale,
+          height=HEIGHT*flower.scale;
+      flower._x=parseInt(Math.random()*(1024-width));
+      flower._y=-height;
+      flower.step=parseInt(Math.random()*5+1);
+    }
+
+    function down(flower){
+      if(flower._y<520/flower.scale)
+        flower._y+=flower.step;
+      else
+        reset(flower);
+    }
+
+    /*************  buttons  ****************/
+    //人物中心点的位置:
+    var MX=328,MY=246;
+    var FX=686,FY=294;
+    //鼠标起始位置:
+    var btnYes_X=460,btnYes_Y=330;
+
+    var btn_yes=new Image();
+    btn_yes.src="../images/answer0.png";
+    btn_yes.rotate=0.56673;
+    // var btn_no=new Image();
+    // btn_no.src="../images/answer0.png";
+    // btn_no.rotate=2.417;
+    
+		var pen = pane.getContext('2d');
+
+    function paint(){
+      pen.clearRect(0,0,1024,520);
+      pen.drawImage(bg, 0, 0);
+      /**********  flowers  ************/
+      for(var i=0;i<flowers.length;i++){
+        var flower=flowers[i];
+        down(flower);
+        pen.scale(flower.scale,flower.scale);
+        pen.drawImage(
+          flower,
+          flower._x/flower.scale,
+          flower._y/flower.scale
+        );
+        pen.scale(1/flower.scale,1/flower.scale);
+      }
+      pen.drawImage(person, 0, 0);
+      /**********  buttons  ************/
+      pen.rotate(btn_yes.rotate);
+      //旋转后坐标: 向右下x正向，向左下y正向
+      pen.drawImage(btn_yes,355,-25);
+      pen.rotate(-btn_yes.rotate);
+
+      // pen.rotate(btn_no.rotate);
+      // //旋转后坐标: 向左下x正向，向右上y正向
+      // pen.drawImage(btn_no,-370,-725);
+      // pen.rotate(-btn_no.rotate);
+    }
+
+    window.onload=function(){
+      setInterval(paint,50);
+    }
+    
+  </script>
+</body>
+</html>
