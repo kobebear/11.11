@@ -22,42 +22,45 @@
 		bg.src = "../images/bg.png";
     var person = new Image();
 		person.src = "../images/person.png";
-    //Step1: 定义一朵flower，初始化开始位置为x=0,y=0
-    var WIDTH=92,HEIGHT=81;//图片原始大小
+
+    var WIDTH=92,HEIGHT=81;
+
     var flower=new Image();
     flower.src="../images/flower.png";
-    //强调！不能用x和y，有冲突！！！
-    flower._x=0;
-    flower._y=-HEIGHT;//从屏幕上方落下
-    //Step3: 定义flower每次下落的距离
-    flower.step=5;
-    //Step4: 定义让flower下落的方法
+    //Step1: 定义函数，专门生成花朵随机大小和位置
+    function resize(flower){
+      flower.scale=parseInt(Math.random()*71+30)/100;
+      var width=WIDTH*flower.scale,
+          height=HEIGHT*flower.scale;
+      flower._x=parseInt(Math.random()*(1024-width));
+      flower._y=-height;
+      flower.step=parseInt(Math.random()*5+1);
+    }
+
     function down(flower){
-      //Step7: 如果超出，就回到顶部
       if(flower._y<520)
         flower._y+=flower.step;
       else
-        flower._y=-HEIGHT;
+        //Step2: 每次到底，重新定位花朵大小和新位置
+        resize(flower);
     }
     
 		var pen = pane.getContext('2d');
 
-    //Step5: 定义重绘一切的函数
     function paint(){
       pen.clearRect(0,0,1024,520);
       pen.drawImage(bg, 0, 0);
       pen.drawImage(person, 0, 0);
       down(flower);
+      //Step3: 缩小画笔，画小花
+      pen.scale(flower.scale,flower.scale);
       pen.drawImage(flower,flower._x,flower._y);
+             //放大回正常，画其他！
+      pen.scale(1/flower.scale,1/flower.scale);
     }
 
     window.onload=function(){
-      //Step6: 反复重绘一切
       setInterval(paint,50);
-      // pen.drawImage(bg, 0, 0);
-      // pen.drawImage(person, 0, 0);
-      // //Step2: 在flower定义的x,y位置绘制一朵小花
-      // pen.drawImage(flower,flower.x,flower.y);
     }
     
   </script>
