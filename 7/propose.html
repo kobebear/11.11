@@ -135,7 +135,7 @@
           +
           Math.pow(Math.abs(ey-btnYes._y),2)
         );
-        if(dist<=50){
+        if(dist<=r){
           pass=true;
         }else{
           var dist=Math.sqrt(
@@ -143,7 +143,7 @@
             +
             Math.pow(Math.abs(ey-btnNo._y),2)
           );
-          if(dist<=50){
+          if(dist<=r){
             alert("不愿意！");
           }
         }
@@ -160,8 +160,15 @@
         moveBtnNo();
       }
     }
-    function moveBtnNo(){
-
+    function moveBtnNo(ex,ey){
+      do{
+        ax = Math.floor((Math.random() * 190) + 648);
+	    	ay = Math.floor((Math.random() * 190) + 210);
+	    	d = Math.sqrt(Math.pow((ex-ax),2)
+						+Math.pow((ey-ay),2));
+      }while(d<r+10);
+      btnNo._x = ax;
+	    btnNo._y = ay;
     }
   </script>
 </body>
