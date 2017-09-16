@@ -149,6 +149,20 @@
         }
       }
     }
+    pane.onmousemove=function(e){
+      var ex=e.offsetX,ey=e.offsetY;
+      var dist=Math.sqrt(
+        Math.pow(Math.abs(ex-btnNo._x),2)
+        +
+        Math.pow(Math.abs(ey-btnNo._y),2)
+      );
+      if(dist<=60){
+        moveBtnNo();
+      }
+    }
+    function moveBtnNo(){
+
+    }
   </script>
 </body>
 </html>
